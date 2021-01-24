@@ -16,11 +16,20 @@ data "aws_iam_policy_document" "github-actions" {
     resources = ["${aws_s3_bucket.www-mybytesni-com.arn}/*"]
     effect = "Allow"
   }
+
+  statement {
+    sid = "CreateInvalidation"
+    actions = [
+      "cloudfront:CreateInvalidation"
+    ]
+    resources = [aws_cloudfront_distribution.www-mybytesni-com.arn]
+    effect = "Allow"
+  }
 }
 
 resource "aws_iam_policy" "github-actions" {
   name = "github-actions-for-www-mybytesni-com"
-  description = "Allows github write to the www.mybytesni.com s3 bucket"
+  description = "Allows github write to the www.mybytesni.com s3 bucket and invalidate cloudfront cache"
   policy = data.aws_iam_policy_document.github-actions.json
 }
 
