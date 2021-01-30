@@ -1,14 +1,14 @@
 locals {
-  s3_origin_id = aws_s3_bucket.www-mybytesni-com.bucket
+  s3_origin_id = aws_s3_bucket.profile.bucket
 }
 
-data "aws_acm_certificate" "mybytesni-com" {
-  domain      = "mybytesni.com"
+data "aws_acm_certificate" "profile" {
+  domain      = var.domain
   types       = ["AMAZON_ISSUED"]
   most_recent = true
 }
 
-resource "aws_cloudfront_distribution" "www-mybytesni-com" {
+resource "aws_cloudfront_distribution" "profile" {
   enabled = true
 
   default_root_object = "index.html"
@@ -27,10 +27,10 @@ resource "aws_cloudfront_distribution" "www-mybytesni-com" {
   }
 
   origin {
-    domain_name = aws_s3_bucket.www-mybytesni-com.bucket_domain_name
+    domain_name = aws_s3_bucket.profile.bucket_domain_name
     origin_id   = local.s3_origin_id
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.www-mybytesni-com.cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_identity.profile.cloudfront_access_identity_path
     }
   }
 
@@ -41,19 +41,19 @@ resource "aws_cloudfront_distribution" "www-mybytesni-com" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = data.aws_acm_certificate.mybytesni-com.arn
+    acm_certificate_arn      = data.aws_acm_certificate.profile.arn
     minimum_protocol_version = "TLSv1.2_2019"
     ssl_support_method       = "sni-only"
   }
 
   aliases = [
-    "www.mybytesni.com",
-    "mybytesni.com"
+    var.domain,
+    "www.${var.domain}"
   ]
 
   is_ipv6_enabled = true
 }
 
-resource "aws_cloudfront_origin_access_identity" "www-mybytesni-com" {
+resource "aws_cloudfront_origin_access_identity" "profile" {
   comment = local.s3_origin_id
 }

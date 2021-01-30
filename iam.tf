@@ -4,7 +4,7 @@ data "aws_iam_policy_document" "github-actions" {
     actions = [
       "s3:ListBucket"
     ]
-    resources = [aws_s3_bucket.www-mybytesni-com.arn]
+    resources = [aws_s3_bucket.profile.arn]
     effect = "Allow"
   }
 
@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "github-actions" {
     actions = [
       "s3:PutObject"
     ]
-    resources = ["${aws_s3_bucket.www-mybytesni-com.arn}/*"]
+    resources = ["${aws_s3_bucket.profile.arn}/*"]
     effect = "Allow"
   }
 
@@ -22,19 +22,19 @@ data "aws_iam_policy_document" "github-actions" {
     actions = [
       "cloudfront:CreateInvalidation"
     ]
-    resources = [aws_cloudfront_distribution.www-mybytesni-com.arn]
+    resources = [aws_cloudfront_distribution.profile.arn]
     effect = "Allow"
   }
 }
 
 resource "aws_iam_policy" "github-actions" {
-  name = "github-actions-for-www-mybytesni-com"
-  description = "Allows github write to the www.mybytesni.com s3 bucket and invalidate cloudfront cache"
+  name = "github-actions-for-profile"
+  description = "Allows github write to the www.${var.domain} s3 bucket and invalidate cloudfront cache"
   policy = data.aws_iam_policy_document.github-actions.json
 }
 
 resource "aws_iam_user" "github-actions" {
-  name = "github-actions-for-www-mybytesni-com"
+  name = "github-actions-for-profile"
 }
 
 resource "aws_iam_user_policy_attachment" "github-actions" {
