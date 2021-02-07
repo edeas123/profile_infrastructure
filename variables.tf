@@ -1,3 +1,3 @@
 variable "domain" {
-  default = "mybytesni.com"
+  default = "iamobaro.com"
 }
