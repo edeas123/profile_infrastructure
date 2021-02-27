@@ -11,12 +11,10 @@ terraform {
     key            = "profile-infrastructure"
     region         = "us-east-1"
     dynamodb_table = "mybytesni-terraform-state"
-    profile        = "mybytesni"
     encrypt        = true
   }
 }
 
 provider "aws" {
   region  = "us-east-1"
-  profile = "mybytesni"
 }
